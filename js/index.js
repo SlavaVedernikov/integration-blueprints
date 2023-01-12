@@ -35,7 +35,7 @@
         var pumlDiagram = blocks.find(x => x.key == "template").value;
         blocks.pop();
 
-        pumlDiagram.replace("<<Content>>", blocks.join("\n"));
+        pumlDiagram = pumlDiagram.replace("<<Content>>", blocks.map(x => x.value).join('\n\n'));
 
         $("#diagram").attr("src", "http://www.plantuml.com/plantuml/img/" + window.plantumlEncoder.encode(pumlDiagram));
     }
