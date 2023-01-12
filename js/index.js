@@ -37,7 +37,7 @@
 
         pumlDiagram.replace("<<Content>>", blocks.join("\n"));
 
-        $("#diagram").attr("src", "http://www.plantuml.com/plantuml/img/"+encode64(zip_deflate(pumlDiagram, 9)));
+        $("#diagram").attr("src", "http://www.plantuml.com/plantuml/img/"+encode64(pumlDiagram));
     }
 
     encode64 = function(data) {
