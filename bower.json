@@ -1,0 +1,22 @@
+{
+  "name": "integrationblueprints",
+  "homepage": "https://github.com/SlavaVedernikov/integrationblueprints",
+  "authors": [
+    "Slava Vedernikov <82385901+SlavaVedernikovNL@users.noreply.github.com>"
+  ],
+  "description": "\"Integration Blueprints\"",
+  "main": "\"index.html\"",
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery-ui": "^1.12.1",
+    "plantuml-encoder": "^1.4.0"
+  }
+}
