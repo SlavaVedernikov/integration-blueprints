@@ -1,0 +1,11 @@
+package "Consumer" {
+    Message(consumer_producer_msg, "Message (Producer)")
+    MessageTranslator(producer_translator,"Translate")
+    Message(consumer_consumer_msg, "Message (Consumer)")
+    TransactionalConsumer(consumer, "Consumer")
+
+    producer_channel -down-> "<<1>>" consumer_producer_msg
+    consumer_producer_msg -down-> "<<2>>" producer_translator
+    producer_translator -down-> "<<3>>" consumer_consumer_msg
+    consumer_consumer_msg -down-> "<<4>>" consumer
+}
