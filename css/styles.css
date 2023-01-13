@@ -1,0 +1,98 @@
+body {
+  margin: 10px;
+}
+
+.header { 
+  grid-area: header; 
+  background-color: #03254c!important;
+  display: block;
+}
+.producer { grid-area: producer; }
+.integration-platform { 
+  grid-area: integration-platform; 
+  display: grid;
+  gap: 10px;
+  background-color: #1167b1;
+  padding: 10px;
+  grid-template-areas:
+  'header header header header header'
+  'producer-adapter producer-api mediation-layer consumer-api consumer-adapter'
+  'footer footer footer footer footer';
+}
+.producer-adapter { grid-area: producer-adapter; }
+.producer-api { grid-area: producer-api; }
+.mediation-layer { grid-area: mediation-layer; }
+.consumer-api { grid-area: consumer-api; }
+.consumer-adapter { grid-area: consumer-adapter; }
+.consumer { grid-area: consumer; }
+.footer { grid-area: footer; }
+.component-header { 
+  grid-area: component-header; 
+  height: 20%;
+}
+.component-icon { 
+  grid-area: component-icon;
+  vertical-align: middle;
+  height: 50%;
+}
+.component-links { 
+  grid-area: component-links;
+  height: 30%;
+}
+
+.component-links > ul {
+  list-style-type: none;
+  color: #ffffff!important;
+}
+
+.component-links > ul > li > a {
+  color: #ffffff;
+}
+
+.component-footer { grid-area: component-footer; }
+
+.grid-container-blueprint {
+  display: grid;
+  gap: 10px;
+  background-color: #1167b1;
+  padding: 10px;
+  grid-template-areas:
+  'header header header'
+  'producer integration-platform consumer'
+  'footer footer footer';
+}
+
+.grid-container-component {
+  display: grid;
+  gap: 10px;
+  height: 100%;
+  grid-template-areas:
+  'component-header'
+  'component-icon'
+  'component-links'
+  'component-footer';
+}
+
+.grid-container-blueprint > div {
+  background-color: #2a9df4;
+  text-align: center;
+  padding: 10px;
+  font-size: 14px;
+  color: #ffffff;
+}
+
+.grid-container-component > div {
+  color: #ffffff;
+}
+
+.integration-platform > div {
+  background-color: #187bcd;
+  text-align: center;
+  padding: 10px;
+  font-size: 14px;
+  color: #ffffff;
+}
+
+div > img {
+  padding: 10px;
+}

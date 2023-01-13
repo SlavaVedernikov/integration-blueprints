@@ -10,6 +10,10 @@
     // private properties
 
     // public methods and properties
+    app.GetPalmUMLImageUrl = function() {
+
+    }
+
     app.loadBlueprint = function(blocks) {
         blocks.push({ key: "template"});
 
