@@ -1,11 +1,13 @@
 var options = [
     ["producer-push", "producer-pull"],
+    ["producer-item", "producer-batch"],
     ["", "producer-adapter"],
     ["", "producer-api"],
     ["", "mediation-layer"],
     ["", "consumer-api"],
     ["", "consumer-adapter"],
     ["consumer-push", "consumer-pull"],
+    ["consumer-item", "consumer-batch"],
     ["consumer-data-contract", "consumer-data-contract", "canonical-data-contract"]
     ];
 
@@ -17,4 +19,4 @@ function combos(list, n = 0, result = [], current = []){
 }
 
 var combos = combos(options);
-combos.forEach(x => console.log(x.filter(y => y != "").join("-")));
+combos.forEach(x => console.log(x.filter(y => y != "").join("--") + ","));

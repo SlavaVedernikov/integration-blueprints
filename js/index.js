@@ -10,12 +10,14 @@
     // private properties
     var urlOptions = [
         ["producer-push", "producer-pull"],
+        ["producer-item", "producer-batch"],
         ["", "producer-adapter"],
         ["", "producer-api"],
         ["", "mediation-layer"],
         ["", "consumer-api"],
         ["", "consumer-adapter"],
         ["consumer-push", "consumer-pull"],
+        ["consumer-item", "consumer-batch"],
         ["consumer-data-contract", "consumer-data-contract", "canonical-data-contract"]
         ];
 
@@ -25,23 +27,34 @@
     app.loadPage = function() {
         $.ajax(
             {
-                url: "/data/urls.json",
+                url: "../../data/urls.json",
                 type: 'GET',
                 success: function(data) {     
                     urls = data.data;
                     updateLinks();
+                    /*
+                    //TODO: get PalmUML blocks based on URL
+                    loadBlueprint([{
+                        key: "producer_push_producer_channel"
+                    }, {
+                        key: "consumer_pull_producer_channel"
+                    }]);
+                    */
                 }
             });
     };
 
-    app.loadBlueprint = function(blocks) {
+    
+
+    // private methods
+    loadBlueprint = function(blocks) {
         blocks.push({ key: "template"});
 
         for(var i = 0; i < blocks.length; i++) {
             (function(index){
                 $.ajax(
                     {
-                        url: "/palmuml/" + blocks[i].key +".puml",
+                        url: "../../palmuml/" + blocks[i].key +".puml",
                         type: 'GET',
                         success: function(data) {     
                             blocks[index].value = data;
@@ -54,7 +67,6 @@
         }  
     };
 
-    // private methods
     renderBlueprint = function(blocks) {
         var pumlDiagram = blocks.find(x => x.key == "template").value;
         blocks.pop();
@@ -68,29 +80,58 @@
         var blueprintCode = window.location.pathname.replace("index.html", "").split("/").filter(x => x).pop();
         console.log(blueprintCode);
         var blueprintComponents = blueprintCode.split("--");
-        var componentLinks = $(".component-links > ul > li");
+        var componentLinks = $(".component-links > ul > li[id]");
         componentLinks.each(i => {
             var componentLink = $(componentLinks[i]);
             var componentLinkId = componentLink.attr("id");
             var linkComponent = componentLinkId.split("--")[1];
             var linkComponentAction = componentLinkId.split("--")[0];
+            var linkBlueprintComponents = blueprintComponents.map((x) => x);
             var componentIsInBlueprint = blueprintComponents.find(x => x == linkComponent);
 
-            if(componentIsInBlueprint && linkComponentAction == "remove") {
+            if(componentIsInBlueprint && linkComponentAction == "show") { 
+                componentLink.show();
+            }
+            else if(componentIsInBlueprint && linkComponentAction == "remove") {
+                linkBlueprintComponents = linkBlueprintComponents.filter(x => x != linkComponent);
+                componentLink.children("a").attr("href", "../" + getBlueprintUrl(linkBlueprintComponents)); 
                 componentLink.show();
             }
             else if(!componentIsInBlueprint && linkComponentAction == "add"){
+                linkBlueprintComponents.push(linkComponent);
+                componentLink.children("a").attr("href", "../" + getBlueprintUrl(linkBlueprintComponents)); 
                 componentLink.show();
+                
                 var componentContainer = componentLink.parents(".grid-container-component");
-                if(!componentContainer.parent().hasClass("producer") && !componentContainer.parent().hasClass("consumer"))
-                {
-                    componentContainer.css( "background-color", "#aaaaaa");
-                    componentContainer.children(".component-icon").children("img").css("opacity", "0.5");
-                }
+                componentContainer.css( "background-color", "#aaaaaa");
+                componentContainer.children(".component-icon").children("img").css("opacity", "0.5");
+            }
+            else if(componentIsInBlueprint && linkComponentAction == "replace"){
+                linkBlueprintComponents = linkBlueprintComponents.filter(x => x != linkComponent);
+                var linkComponentReplacement = componentLinkId.split("--")[2];
+                linkBlueprintComponents.push(linkComponentReplacement);
+                componentLink.children("a").attr("href", "../" + getBlueprintUrl(linkBlueprintComponents)); 
+                componentLink.show();
             }
         });
-        
-    }
+    };
+
+    getBlueprintUrl = function(blueprintComponents) {
+        var urlSegments = [];
+        urlOptions.forEach((urlOptionsSegment) => {
+                urlOptionsSegment.every((segment) => {
+                    if(blueprintComponents.find(component => component == segment)) {
+                        urlSegments.push(segment);
+                        return false;
+                    }
+                    urlSegments.push("");
+                    return true;
+                });
+            }
+        )
+
+        return urlSegments.filter(segment => segment != "").join("--");
+    };
 
     // check to evaluate whether "app" exists in the 
     // global app - if not, assign window.app an 
