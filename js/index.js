@@ -32,13 +32,14 @@
                 success: function(data) {     
                     urls = data.data;
                     updateLinks();
-                    
+                    /*
                     //TODO: get PalmUML blocks based on URL
                     loadBlueprint([{
                         key: "producer_push_producer_channel"
                     }, {
                         key: "consumer_pull_producer_channel"
                     }]);
+                    */
                     
                 }
             });
@@ -133,7 +134,7 @@
                 dataContractLink.show();
             }
         });
-        
+
         var dataContractSpans = $("span[id$='-data-contract']");
         dataContractSpans.each(i => {
             var dataContractSpan = $(dataContractSpans[i]);
