@@ -18,7 +18,7 @@
         ["", "consumer-adapter"],
         ["consumer-push", "consumer-pull"],
         ["consumer-item", "consumer-batch"],
-        ["consumer-data-contract", "consumer-data-contract", "canonical-data-contract"]
+        ["producer-data-contract", "consumer-data-contract", "canonical-data-contract"]
         ];
 
     var urls = [];
@@ -32,14 +32,14 @@
                 success: function(data) {     
                     urls = data.data;
                     updateLinks();
-                    /*
+                    
                     //TODO: get PalmUML blocks based on URL
                     loadBlueprint([{
                         key: "producer_push_producer_channel"
                     }, {
                         key: "consumer_pull_producer_channel"
                     }]);
-                    */
+                    
                 }
             });
     };
@@ -81,6 +81,7 @@
         console.log(blueprintCode);
         var blueprintComponents = blueprintCode.split("--");
         var componentLinks = $(".component-links > ul > li[id]");
+
         componentLinks.each(i => {
             var componentLink = $(componentLinks[i]);
             var componentLinkId = componentLink.attr("id");
@@ -112,6 +113,37 @@
                 linkBlueprintComponents.push(linkComponentReplacement);
                 componentLink.children("a").attr("href", "../" + getBlueprintUrl(linkBlueprintComponents)); 
                 componentLink.show();
+            }
+        });
+
+        var dataContractLinks = $("a[id$='-data-contract']");
+        dataContractLinks.each(i => {
+            var dataContractLink = $(dataContractLinks[i]);
+            var dataContractLinkId = dataContractLink.attr("id");
+            var dataContracts = dataContractLinkId.split("--")[1].split(":");
+            var dataContractAction = dataContractLinkId.split("--")[0];
+            var linkBlueprintComponents = blueprintComponents.map((x) => x);
+            var dataContractIsInBlueprint = blueprintComponents.find(x => dataContracts.find(y => y == x));
+
+            if(dataContractIsInBlueprint && dataContractAction == "replace"){
+                linkBlueprintComponents = linkBlueprintComponents.filter(x => !dataContracts.includes(x));
+                var linkDataContractReplacement = dataContractLinkId.split("--")[2];
+                linkBlueprintComponents.push(linkDataContractReplacement);
+                dataContractLink.attr("href", "../" + getBlueprintUrl(linkBlueprintComponents)); 
+                dataContractLink.show();
+            }
+        });
+        
+        var dataContractSpans = $("span[id$='-data-contract']");
+        dataContractSpans.each(i => {
+            var dataContractSpan = $(dataContractSpans[i]);
+            var dataContractSpanId = dataContractSpan.attr("id");
+            var dataContract = dataContractSpanId.split("--")[1];
+            var dataContractAction = dataContractSpanId.split("--")[0];
+            var dataContractIsInBlueprint = blueprintComponents.find(x => x == dataContract);
+
+            if(dataContractIsInBlueprint && dataContractAction == "show") { 
+                dataContractSpan.show();
             }
         });
     };

@@ -53,6 +53,11 @@ body {
   text-decoration: underline;
 }
 
+.footer > a {
+  color: #ffffff;
+  text-decoration: underline;
+}
+
 .component-footer { grid-area: component-footer; }
 
 .grid-container-blueprint {

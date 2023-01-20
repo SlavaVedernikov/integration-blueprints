@@ -8,7 +8,7 @@ var options = [
     ["", "consumer-adapter"],
     ["consumer-push", "consumer-pull"],
     ["consumer-item", "consumer-batch"],
-    ["consumer-data-contract", "consumer-data-contract", "canonical-data-contract"]
+    ["producer-data-contract", "consumer-data-contract", "canonical-data-contract"]
     ];
 
 function combos(list, n = 0, result = [], current = []){
