@@ -9,17 +9,22 @@
 
     // private properties
     var urlOptions = [
-        ["producer-push", "producer-pull"],
-        ["producer-item", "producer-batch"],
-        ["", "producer-adapter"],
-        ["", "producer-api"],
+        ["producer-file-transfer", "producer-shared-db", "producer-rpc", "producer-messaging", "producer-webhook"],
+        ["", "p-adapter"],
+        ["", "publisher-api"],
         ["", "mediation-layer"],
-        ["", "consumer-api"],
-        ["", "consumer-adapter"],
-        ["consumer-push", "consumer-pull"],
-        ["consumer-item", "consumer-batch"],
-        ["producer-data-contract", "consumer-data-contract", "canonical-data-contract"]
+        ["", "subscriber-api"],
+        ["", "c-adapter"],
+        ["consumer-file-transfer", "consumer-shared-db", "consumer-rpc", "consumer-messaging", "consumer-webhook"],
+        ["producer-data-contract", "canonical-data-contract"],
+        ["producer-channel", "mediation-layer-channel"]
         ];
+
+    var palmUmlTokens = {
+        content: "<<CONTENT>>",
+        messageMultiplicity: "<<MESSAGE_MULTIPLICITY>>",
+        dataContract: "<<DATA_CONTRACT>>",
+    }
 
     var urls = [];
 
@@ -32,14 +37,14 @@
                 success: function(data) {     
                     urls = data.data;
                     updateLinks();
-                    /*
+                    ///*
                     //TODO: get PalmUML blocks based on URL
                     loadBlueprint([{
                         key: "producer_push_producer_channel"
                     }, {
                         key: "consumer_pull_producer_channel"
                     }]);
-                    */
+                    //*/
                     
                 }
             });
@@ -72,7 +77,7 @@
         var pumlDiagram = blocks.find(x => x.key == "template").value;
         blocks.pop();
 
-        pumlDiagram = pumlDiagram.replace("<<Content>>", blocks.map(x => x.value).join('\n\n'));
+        pumlDiagram = pumlDiagram.replace(palmUmlTokens.content, blocks.map(x => x.value).join('\n\n'));
 
         $("#diagram").attr("src", "http://www.plantuml.com/plantuml/img/" + window.plantumlEncoder.encode(pumlDiagram));
     };
@@ -86,8 +91,10 @@
         componentLinks.each(i => {
             var componentLink = $(componentLinks[i]);
             var componentLinkId = componentLink.attr("id");
-            var linkComponent = componentLinkId.split("--")[1];
-            var linkComponentAction = componentLinkId.split("--")[0];
+            var linkIdSegments = componentLinkId.split("--");
+            var linkComponentAction = linkIdSegments[0];
+            var linkComponent = linkComponentAction == "replace" ? linkIdSegments[2] : linkIdSegments[1];
+            var linkAlternativeComponents = linkIdSegments[1].split(":");
             var linkBlueprintComponents = blueprintComponents.map((x) => x);
             var componentIsInBlueprint = blueprintComponents.find(x => x == linkComponent);
 
@@ -107,11 +114,11 @@
                 var componentContainer = componentLink.parents(".grid-container-component");
                 componentContainer.css( "background-color", "#aaaaaa");
                 componentContainer.children(".component-icon").children("img").css("opacity", "0.5");
+                componentContainer.children(".component-icon").children("div").children("img").css("opacity", "0.5");
             }
-            else if(componentIsInBlueprint && linkComponentAction == "replace"){
-                linkBlueprintComponents = linkBlueprintComponents.filter(x => x != linkComponent);
-                var linkComponentReplacement = componentLinkId.split("--")[2];
-                linkBlueprintComponents.push(linkComponentReplacement);
+            else if(!componentIsInBlueprint && linkComponentAction == "replace"){
+                linkBlueprintComponents = linkBlueprintComponents.filter(x => !linkAlternativeComponents.includes(x));
+                linkBlueprintComponents.push(linkComponent);
                 componentLink.children("a").attr("href", "../" + getBlueprintUrl(linkBlueprintComponents)); 
                 componentLink.show();
             }
@@ -145,6 +152,37 @@
 
             if(dataContractIsInBlueprint && dataContractAction == "show") { 
                 dataContractSpan.show();
+            }
+        });
+
+        var channelLinks = $("a[id$='-channel']");
+        channelLinks.each(i => {
+            var channelLink = $(channelLinks[i]);
+            var channelLinkId = channelLink.attr("id");
+            var channels = channelLinkId.split("--")[1].split(":");
+            var channelAction = channelLinkId.split("--")[0];
+            var linkBlueprintComponents = blueprintComponents.map((x) => x);
+            var channelIsInBlueprint = blueprintComponents.find(x => channels.find(y => y == x));
+
+            if(channelIsInBlueprint && channelAction == "replace"){
+                linkBlueprintComponents = linkBlueprintComponents.filter(x => !channels.includes(x));
+                var linkchannelReplacement = channelLinkId.split("--")[2];
+                linkBlueprintComponents.push(linkchannelReplacement);
+                channelLink.attr("href", "../" + getBlueprintUrl(linkBlueprintComponents)); 
+                channelLink.show();
+            }
+        });
+
+        var channelSpans = $("span[id$='-channel']");
+        channelSpans.each(i => {
+            var channelSpan = $(channelSpans[i]);
+            var channelSpanId = channelSpan.attr("id");
+            var channel = channelSpanId.split("--")[1];
+            var channelAction = channelSpanId.split("--")[0];
+            var channelIsInBlueprint = blueprintComponents.find(x => x == channel);
+
+            if(channelIsInBlueprint && channelAction == "show") { 
+                channelSpan.show();
             }
         });
     };

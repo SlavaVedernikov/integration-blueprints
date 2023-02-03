@@ -1,8 +1,0 @@
-package "Producer" {
-    TransactionalProducer(producer, "Producer")
-    Message(producer_msg, "Message (Producer)")
-    MsgChannel(producer_channel, "Producer Channel")
-
-    producer -down-> "<<1>>" producer_msg
-    producer_msg -down-> "<<2>>" producer_channel
-}

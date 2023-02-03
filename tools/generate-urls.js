@@ -1,14 +1,13 @@
 var options = [
-    ["producer-push", "producer-pull"],
-    ["producer-item", "producer-batch"],
-    ["", "producer-adapter"],
-    ["", "producer-api"],
+    ["producer-file-transfer", "producer-shared-db", "producer-rpc", "producer-messaging", "producer-webhook"],
+    ["", "p-adapter"],
+    ["", "publisher-api"],
     ["", "mediation-layer"],
-    ["", "consumer-api"],
-    ["", "consumer-adapter"],
-    ["consumer-push", "consumer-pull"],
-    ["consumer-item", "consumer-batch"],
-    ["producer-data-contract", "consumer-data-contract", "canonical-data-contract"]
+    ["", "subscriber-api"],
+    ["", "c-adapter"],
+    ["consumer-file-transfer", "consumer-shared-db", "consumer-rpc", "consumer-messaging", "consumer-webhook"],
+    ["producer-data-contract", "canonical-data-contract"],
+    ["producer-channel", "mediation-layer-channel"]
     ];
 
 function combos(list, n = 0, result = [], current = []){

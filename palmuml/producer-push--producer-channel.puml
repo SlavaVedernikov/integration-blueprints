@@ -1,0 +1,8 @@
+package "Producer" {
+    TransactionalProducer(producer, "Producer")
+    Message(producer_msg, "<<MESSAGE_MULTIPLICITY>>\n(<<DATA_CONTRACT>>)")
+    MsgChannel(producer_channel, "Producer Channel")
+
+    producer -down-> "<<1>>" producer_msg
+    producer_msg -down-> "<<2>>" producer_channel
+}
