@@ -1,0 +1,82 @@
+!$use_producer_adapter = "<<USE_PRODUCER_ADAPTER>>"
+!$use_producer_api = "<<USE_PRODUCER_API>>"
+!$use_consumer_adapter = "<<USE_CONSUMER_ADAPTER>>"
+!$use_consumer_api = "<<USE_CONSUMER_API>>"
+
+package "Integration Platform" {
+   !if ($use_producer_adapter == "true")
+      package "Producer Adapter" {
+         Message(producer_adapter_output_msg, "\nMessage\n(Canonical)")
+
+         !if ($is_producer_conformist  == "true")
+            !if ($use_producer_channel == "true")
+               producer_channel -down-> producer_adapter_output_msg
+            !else
+               producer_output_msg -down-> producer_adapter_output_msg
+            !endif
+         !else
+            Message(producer_adapter_input_msg, "\n$producer_output_msg_type\n($producer_output_msg_contract)")
+            MessageTranslator(producer_adapter_translator,"Translate")
+            !if ($use_producer_channel == "true")
+               producer_channel -down-> producer_adapter_input_msg
+            !else
+               producer_output_msg -down-> producer_adapter_input_msg
+            !endif
+            producer_adapter_input_msg -down-> producer_adapter_translator
+            producer_adapter_translator -down-> producer_adapter_output_msg
+         !endif
+      }
+   !endif
+
+   !if ($use_producer_api == "true")
+      package "Producer API" {
+         Message(producer_api_output_msg, "\nMessage\n(Canonical)")
+
+         !if ($use_producer_adapter == "true")
+            producer_adapter_output_msg -down-> producer_api_output_msg
+         !else
+            producer_output_msg -down-> producer_api_output_msg
+         !endif
+      }
+   !endif
+
+   package "Mediation Layer" {
+      PubSubChannel(mediation_layer_channel, "Pub/Sub Channel")
+      Message(mediation_layer_output_msg, "\nMessage\n(Canonical)")
+      !if ($use_producer_api == "true")
+         producer_api_output_msg -down-> mediation_layer_channel
+      !elseif ($use_producer_adapter == "true")
+         producer_adapter_output_msg -down-> mediation_layer_channel
+      !endif
+      mediation_layer_channel -down-> mediation_layer_output_msg
+   }
+
+   !if ($use_consumer_api == "true")
+      package "Consumer API" {
+         
+      }
+   !endif
+
+   !if ($use_consumer_adapter == "true")
+      package "Consumer Adapter" {
+         Message(consumer_adapter_output_msg, "\n$consumer_input_msg_type\n($consumer_input_msg_contract)")
+
+         !if ($is_consumer_conformist  == "true")
+           mediation_layer_output_msg -down-> consumer_adapter_output_msg
+         !else
+            Message(consumer_adapter_input_msg, "\nMessage\n(Canonical)")
+            MessageTranslator(consumer_adapter_translator,"Translate")
+            mediation_layer_output_msg  -down-> consumer_adapter_input_msg
+            consumer_adapter_input_msg -down-> consumer_adapter_translator
+            consumer_adapter_translator -down-> consumer_adapter_output_msg
+         !endif
+
+         !if ($use_consumer_channel == "true")
+            consumer_adapter_output_msg -down-> consumer_channel
+         !else
+            consumer_adapter_output_msg -down-> consumer_input_msg
+         !endif
+      }
+   !endif
+
+}

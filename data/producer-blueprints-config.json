@@ -1,0 +1,57 @@
+{
+    "data": [{
+        "urlOptionKeys": [
+            "producer-file-transfer",
+            "producer-shared-db",
+            "producer-rpc-pull",
+            "producer-messaging"
+        ],
+        "urlOptionValues": {
+            "required": [
+                "p-adapter"
+            ],
+            "optional": [
+                "p-api"
+            ],
+            "switchable":[
+                ["p-conformist", "p-non-conformist"]
+            ]}
+        }, {
+            "urlOptionKeys": [
+                "producer-rpc-push"
+            ],
+            "urlOptionValues": {
+                "required": [
+                    "p-non-conformist",
+                    "p-adapter"
+                    
+                ],
+                "optional": [
+                    "p-api"
+                ]}
+        }, {
+            "urlOptionKeys": [
+                "producer-rpc-push"
+            ],
+            "urlOptionValues": {
+                "required": [
+                    "p-conformist",
+                    "p-api"
+                    
+                ]}
+        }, {
+            "urlOptionKeys": [
+                "producer-webhook"
+            ],
+            "urlOptionValues": {
+                "required": [
+                    "p-non-conformist",
+                    "p-adapter"
+                    
+                ],
+                "optional": [
+                    "p-api"
+                ]}
+        }      
+    ]
+}

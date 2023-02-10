@@ -1,0 +1,26 @@
+!$is_consumer_conformist = "true"
+!$consumer_input_msg_contract = "Consumer"
+!if ($is_consumer_conformist == "true")
+   !$consumer_input_msg_contract = "Canonical"
+!endif
+!$consumer_input_msg_type = "Message"
+!$use_consumer_channel = "false"
+
+package "Consumer" {
+    TransactionalConsumer(consumer, "Consumer")
+    Message(consumer_input_msg, "\n$consumer_input_msg_type\n($consumer_input_msg_contract)")
+    ServiceActivator(consumer_channel, "Webhook (Callback)")
+    
+    !if ($is_consumer_conformist == "true")
+      MessageTranslator(consumer_translator,"Translate")
+      Message(consumer_translator_output_msg, "\n$consumer_input_msg_type\n(Consumer)")
+      consumer_channel -down-> consumer_input_msg 
+      consumer_input_msg -down-> "<<1>>" consumer_translator
+      consumer_translator -down-> "<<2>>" consumer_translator_output_msg
+      consumer_translator_output_msg -down-> "<<3>>" consumer
+      
+    !else
+      consumer_channel -down-> consumer_input_msg 
+      consumer_input_msg -down-> "<<1>>" consumer
+    !endif 
+}

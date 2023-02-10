@@ -1,0 +1,32 @@
+!$is_producer_conformist = "<<IS_PRODUCER_CONFORMIST>>"
+!$producer_output_msg_contract = "Producer"
+!if ($is_producer_conformist == "true")
+   !$producer_output_msg_contract = "Canonical"
+!endif
+!$producer_output_msg_type = "Message"
+!$use_producer_channel = "true"
+
+package "Producer" {
+    TransactionalProducer(producer, "Producer")
+    Message(producer_output_msg, "\n$producer_output_msg_type\n($producer_output_msg_contract)")
+
+    !if ($use_producer_channel == "true")
+         MsgChannel(producer_channel, "Producer Channel")
+    !endif
+    
+    !if ($is_producer_conformist == "true")
+      MessageTranslator(producer_translator,"Translate")
+      Message(producer_input_msg, "\n$producer_output_msg_type\n(Producer)")
+      producer -down-> "<<1>>" producer_input_msg
+      producer_input_msg-down-> producer_translator
+      producer_translator -down-> "<<2>>" producer_output_msg
+      !if ($use_producer_channel == "true")
+         producer_output_msg -down-> "<<3>>" producer_channel
+      !endif
+    !else
+      producer -down-> "<<1>>" producer_output_msg
+      !if ($use_producer_channel == "true")
+         producer_output_msg -down-> "<<2>>" producer_channel
+      !endif
+    !endif 
+}

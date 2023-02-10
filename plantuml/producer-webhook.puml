@@ -1,0 +1,24 @@
+!$is_producer_conformist = "false"
+!$producer_output_msg_contract = "Producer"
+!if ($is_producer_conformist == "true")
+   !$producer_output_msg_contract = "Canonical"
+!endif
+!$producer_output_msg_type = "Message"
+!$use_producer_channel = "false"
+
+package "Producer" {
+    TransactionalProducer(producer, "Producer")
+    Message(producer_output_msg, "\n$producer_output_msg_type\n($producer_output_msg_contract)")
+
+    ServiceActivator(producer_webhook_subscribe_channel, "Webhook (Subscribe)")
+    producer_webhook_subscribe_channel -down-> "<<1>>" producer
+    !if ($is_producer_conformist == "true")
+      MessageTranslator(producer_translator,"Translate")
+      Message(producer_input_msg, "\n$producer_output_msg_type\n(Producer)")
+      producer -down-> producer_input_msg 
+      producer_input_msg -down-> "<<2>>" producer_translator
+      producer_translator -down-> "<<3>>" producer_output_msg
+    !else
+      producer -down-> "<<2>>" producer_output_msg 
+    !endif 
+}

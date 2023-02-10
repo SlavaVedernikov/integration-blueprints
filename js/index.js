@@ -9,22 +9,57 @@
 
     // private properties
     var urlOptions = [
-        ["producer-file-transfer", "producer-shared-db", "producer-rpc", "producer-messaging", "producer-webhook"],
+        ["producer-file-transfer", "producer-shared-db", "producer-rpc-pull", "producer-rpc-push", "producer-messaging", "producer-webhook"],
+        ["p-conformist", "p-non-conformist"],
         ["", "p-adapter"],
-        ["", "publisher-api"],
+        ["", "p-api"],
         ["", "mediation-layer"],
-        ["", "subscriber-api"],
+        ["", "c-api"],
         ["", "c-adapter"],
-        ["consumer-file-transfer", "consumer-shared-db", "consumer-rpc", "consumer-messaging", "consumer-webhook"],
-        ["producer-data-contract", "canonical-data-contract"],
-        ["producer-channel", "mediation-layer-channel"]
-        ];
+        ["c-conformist", "c-non-conformist"],
+        ["consumer-file-transfer", "consumer-shared-db", "consumer-rpc-pull", "consumer-rpc-push", "consumer-messaging", "consumer-webhook"]
+    ];
 
-    var palmUmlTokens = {
-        content: "<<CONTENT>>",
-        messageMultiplicity: "<<MESSAGE_MULTIPLICITY>>",
-        dataContract: "<<DATA_CONTRACT>>",
-    }
+    var urlSegmentPlantUmlTokenMapping = [{
+        urlSegment: "p-conformist",
+        token: "IS_PRODUCER_CONFORMIST",
+        value: "true"
+    },
+    {
+        urlSegment: "p-non-conformist",
+        token: "IS_PRODUCER_CONFORMIST",
+        value: "false"
+    },
+    {
+        urlSegment: "c-conformist",
+        token: "IS_CONSUMER_CONFORMIST",
+        value: "true"
+    },
+    {
+        urlSegment: "c-non-conformist",
+        token: "IS_CONSUMER_CONFORMIST",
+        value: "false"
+    },
+    {
+        urlSegment: "p-adapter",
+        token: "USE_PRODUCER_ADAPTER",
+        value: "true"
+    },
+    {
+        urlSegment: "p-api",
+        token: "USE_PRODUCER_API",
+        value: "true"
+    },
+    {
+        urlSegment: "c-adapter",
+        token: "USE_CONSUMER_ADAPTER",
+        value: "true"
+    },
+    {
+        urlSegment: "c-api",
+        token: "USE_CONSUMER_API",
+        value: "true"
+    }];
 
     var urls = [];
 
@@ -77,7 +112,7 @@
         var pumlDiagram = blocks.find(x => x.key == "template").value;
         blocks.pop();
 
-        pumlDiagram = pumlDiagram.replace(palmUmlTokens.content, blocks.map(x => x.value).join('\n\n'));
+        pumlDiagram = pumlDiagram.replace(plantUml.content, blocks.map(x => x.value).join('\n\n'));
 
         $("#diagram").attr("src", "http://www.plantuml.com/plantuml/img/" + window.plantumlEncoder.encode(pumlDiagram));
     };
@@ -94,7 +129,7 @@
             var linkIdSegments = componentLinkId.split("--");
             var linkComponentAction = linkIdSegments[0];
             var linkComponent = linkComponentAction == "replace" ? linkIdSegments[2] : linkIdSegments[1];
-            var linkAlternativeComponents = linkIdSegments[1].split(":");
+            var linkAlternativeComponents = linkIdSegments[1].split("+");
             var linkBlueprintComponents = blueprintComponents.map((x) => x);
             var componentIsInBlueprint = blueprintComponents.find(x => x == linkComponent);
 
@@ -128,7 +163,7 @@
         dataContractLinks.each(i => {
             var dataContractLink = $(dataContractLinks[i]);
             var dataContractLinkId = dataContractLink.attr("id");
-            var dataContracts = dataContractLinkId.split("--")[1].split(":");
+            var dataContracts = dataContractLinkId.split("--")[1].split("+");
             var dataContractAction = dataContractLinkId.split("--")[0];
             var linkBlueprintComponents = blueprintComponents.map((x) => x);
             var dataContractIsInBlueprint = blueprintComponents.find(x => dataContracts.find(y => y == x));
@@ -159,7 +194,7 @@
         channelLinks.each(i => {
             var channelLink = $(channelLinks[i]);
             var channelLinkId = channelLink.attr("id");
-            var channels = channelLinkId.split("--")[1].split(":");
+            var channels = channelLinkId.split("--")[1].split("+");
             var channelAction = channelLinkId.split("--")[0];
             var linkBlueprintComponents = blueprintComponents.map((x) => x);
             var channelIsInBlueprint = blueprintComponents.find(x => channels.find(y => y == x));

@@ -1,0 +1,26 @@
+!$is_producer_conformist = "<<IS_PRODUCER_CONFORMIST>>"
+!$producer_output_msg_contract = "Producer"
+!if ($is_producer_conformist == "true")
+   !$producer_output_msg_contract = "Canonical"
+!endif
+!$producer_output_msg_type = "Message"
+!$use_producer_channel = "false"
+
+package "Producer" {
+    TransactionalProducer(producer, "Producer")
+    Message(producer_output_msg, "\n$producer_output_msg_type\n($producer_output_msg_contract)")
+
+    MessageStore(producer_channel, "Shared Database")
+
+    !if ($is_producer_conformist == "true")
+      MessageTranslator(producer_translator,"Translate")
+      Message(producer_input_msg, "\n$producer_output_msg_type\n(Producer)")
+      producer -down-> producer_input_msg 
+      producer_input_msg -down-> "<<1>>" producer_translator
+      producer_translator -down-> producer_output_msg
+      producer_output_msg -down-> "<<2>>" producer_channel
+    !else
+      producer -down-> producer_output_msg 
+      producer_output_msg -down-> "<<1>>" producer_channel
+    !endif 
+}

@@ -1,0 +1,28 @@
+{
+    "data": [{
+            "urlOptionKeys": [
+                "consumer-file-transfer",
+                "consumer-shared-db",
+                "consumer-messaging",
+                "consumer-rpc-push"
+            ],
+            "urlOptionValues": {
+                "required": [
+                    "c-adapter"
+                ],
+                "switchable":[
+                    ["c-conformist", "c-non-conformist"]
+                ]}
+        }, {
+            "urlOptionKeys": [
+                "consumer-rpc-pull",
+                "consumer-webhook"
+            ],
+            "urlOptionValues": {
+                "required": [
+                    "c-api",
+                    "c-conformist"
+                ]}
+        }       
+    ]
+}
