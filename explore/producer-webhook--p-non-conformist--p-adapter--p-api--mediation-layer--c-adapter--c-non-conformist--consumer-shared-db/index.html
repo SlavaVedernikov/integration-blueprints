@@ -24,17 +24,17 @@
                     <div class="component-links">
                         <ul>
                             <li><strong>Integration style:</strong></li>
-                            <li id="replace--producer-shared-db+producer-rpc+producer-messaging+producer-webhook--producer-file-transfer" style="display: none"><a href="#">File Transfer</a></li>
+                            <li id="replace--producer-shared-db+producer-rpc-pull+producer-rpc-push+producer-messaging+producer-webhook--producer-file-transfer" style="display: none"><a href="#">File Transfer</a></li>
                             <li id="show--producer-file-transfer" style="display: none"><span>File Transfer</span></li>
-                            <li id="replace--producer-file-transfer+producer-rpc+producer-messaging+producer-webhook--producer-shared-db" style="display: none"><a href="#">Shared Database</a></li>
+                            <li id="replace--producer-file-transfer+producer-rpc-pull+producer-rpc-push+producer-messaging+producer-webhook--producer-shared-db" style="display: none"><a href="#">Shared Database</a></li>
                             <li id="show--producer-shared-db" style="display: none"><span>Shared Database</span></li>
                             <li id="replace--producer-file-transfer+producer-shared-db+producer-messaging+producer-webhook+producer-rpc-push--producer-rpc-pull" style="display: none"><a href="#">Remote Procedure Call (Pull)</a></li>
                             <li id="show--producer-rpc-pull" style="display: none"><span>Remote Procedure Call (Pull)</span></li>
                             <li id="replace--producer-file-transfer+producer-shared-db+producer-messaging+producer-webhook+producer-rpc-pull--producer-rpc-push" style="display: none"><a href="#">Remote Procedure Call (Push)</a></li>
                             <li id="show--producer-rpc-push" style="display: none"><span>Remote Procedure Call (Push)</span></li>
-                            <li id="replace--producer-file-transfer+producer-shared-db+producer-rpc+producer-webhook--producer-messaging" style="display: none"><a href="#">Messaging</a></li>
+                            <li id="replace--producer-file-transfer+producer-shared-db+producer-rpc-pull+producer-rpc-push+producer-webhook--producer-messaging" style="display: none"><a href="#">Messaging</a></li>
                             <li id="show--producer-messaging" style="display: none"><span>Messaging</span></li>
-                            <li id="replace--producer-file-transfer+producer-shared-db+producer-rpc+producer-messaging--producer-webhook" style="display: none"><a href="#">Webhook (subscribe)</a></li>
+                            <li id="replace--producer-file-transfer+producer-shared-db+producer-rpc-pull+producer-rpc-push+producer-messaging--producer-webhook" style="display: none"><a href="#">Webhook (subscribe)</a></li>
                             <li id="show--producer-webhook" style="display: none"><span>Webhook (subscribe)</span></li>
                             <li><strong>Data Exchange Contract:</strong></li>
                             <li id="replace--p-conformist--p-non-conformist" style="display: none"><a href="#">Producer</a></li>
@@ -68,14 +68,14 @@
                 </div>
                 <div class="publisher-api">
                     <div class="grid-container-component">
-                        <div class="component-header">Publisher API</div>
+                        <div class="component-header">Producer API</div>
                         <div class="component-icon">
                             <img src="../../sprites/service_activator.png" alt="API">
                         </div>
                         <div class="component-links">
                             <ul>
-                                <li id="add--publisher-api" style="display: none"><a href="#">+ Add</a></li>
-                                <li id="remove--publisher-api" style="display: none"><a href="#">- Remove</a></li>
+                                <li id="add--p-api" style="display: none"><a href="#">+ Add</a></li>
+                                <li id="remove--p-api" style="display: none"><a href="#">- Remove</a></li>
                             </ul>
                         </div>
                     </div>
@@ -98,14 +98,14 @@
                 </div>
                 <div class="subscriber-api">
                     <div class="grid-container-component">
-                        <div class="component-header">Subscriber API</div>
+                        <div class="component-header">Consumer API</div>
                         <div class="component-icon">
                             <img src="../../sprites/service_activator.png" alt="API">
                         </div>
                         <div class="component-links">
                             <ul>
-                                <li id="add--subscriber-api" style="display: none"><a href="#">+ Add</a></li>
-                                <li id="remove--subscriber-api" style="display: none"><a href="#">- Remove</a></li>
+                                <li id="add--c-api" style="display: none"><a href="#">+ Add</a></li>
+                                <li id="remove--c-api" style="display: none"><a href="#">- Remove</a></li>
                             </ul>
                         </div>
                     </div>
@@ -129,15 +129,6 @@
                         </div>
                     </div>
                 </div>
-                <div class="footer">
-                    <strong>Data Exchange Contract: </strong>
-                    <span id="show--canonical-data-contract" style="display: none">Canonical (Common)</span> 
-                    <a id="replace--producer-data-contract+consumer-data-contract--canonical-data-contract" style="display: none" href="#">Canonical (Common)</a> 
-                    <br />
-                    <strong>Data Exchange Channel: </strong>
-                    <span id="show--mediation-layer-channel" style="display: none">Mediation Layer</span> 
-                    <a id="replace--producer-channel+consumer-channel--mediation-layer-channel" style="display: none" href="#">Mediation Layer</a> 
-                </div>
             </div>
             <div class="consumer">
                 <div class="grid-container-component">
@@ -153,17 +144,17 @@
                     <div class="component-links">
                         <ul>
                             <li><strong>Integration style:</strong></li>
-                            <li id="replace--consumer-shared-db+consumer-rpc+consumer-messaging+consumer-webhook--consumer-file-transfer" style="display: none"><a href="#">File Transfer</a></li>
+                            <li id="replace--consumer-shared-db+consumer-rpc-pull+consumer-rpc-push+consumer-messaging+consumer-webhook--consumer-file-transfer" style="display: none"><a href="#">File Transfer</a></li>
                             <li id="show--consumer-file-transfer" style="display: none"><span>File Transfer</span></li>
-                            <li id="replace--consumer-file-transfer+consumer-rpc+consumer-messaging+consumer-webhook--consumer-shared-db" style="display: none"><a href="#">Shared Database</a></li>
+                            <li id="replace--consumer-file-transfer+consumer-rpc-pull+consumer-rpc-push+consumer-messaging+consumer-webhook--consumer-shared-db" style="display: none"><a href="#">Shared Database</a></li>
                             <li id="show--consumer-shared-db" style="display: none"><span>Shared Database</span></li>
                             <li id="replace--consumer-file-transfer+consumer-shared-db+consumer-messaging+consumer-webhook+consumer-rpc-push--consumer-rpc-pull" style="display: none"><a href="#">Remote Procedure Call (Pull)</a></li>
                             <li id="show--consumer-rpc-pull" style="display: none"><span>Remote Procedure Call (Pull)</span></li>
                             <li id="replace--consumer-file-transfer+consumer-shared-db+consumer-messaging+consumer-webhook+consumer-rpc-pull--consumer-rpc-push" style="display: none"><a href="#">Remote Procedure Call (Push)</a></li>
                             <li id="show--consumer-rpc-push" style="display: none"><span>Remote Procedure Call (Push)</span></li>
-                            <li id="replace--consumer-file-transfer+consumer-shared-db+consumer-rpc+consumer-webhook--consumer-messaging" style="display: none"><a href="#">Messaging</a></li>
+                            <li id="replace--consumer-file-transfer+consumer-shared-db+consumer-rpc-pull+consumer-rpc-push+consumer-webhook--consumer-messaging" style="display: none"><a href="#">Messaging</a></li>
                             <li id="show--consumer-messaging" style="display: none"><span>Messaging</span></li>
-                            <li id="replace--consumer-file-transfer+consumer-shared-db+consumer-rpc+consumer-messaging--consumer-webhook" style="display: none"><a href="#">Webhook (callbak)</a></li>
+                            <li id="replace--consumer-file-transfer+consumer-shared-db+consumer-rpc-pull+consumer-rpc-push+consumer-messaging--consumer-webhook" style="display: none"><a href="#">Webhook (callbak)</a></li>
                             <li id="show--consumer-webhook" style="display: none"><span>Webhook</span></li>
                             <li><strong>Data Exchange Contract:</strong></li>
                             <li id="replace--c-conformist--c-non-conformist" style="display: none"><a href="#">Consumer</a></li>
@@ -181,6 +172,7 @@
         
         <script src="../../bower_components/jquery/dist/jquery.min.js"></script>
         <script src="//cdn.rawgit.com/jmnote/plantuml-encoder/d133f316/dist/plantuml-encoder.min.js"></script>
+        <script src="../../js/config.js"></script>
         <script src="../../js/index.js"></script>
         <script>
             function goToPage(event) {

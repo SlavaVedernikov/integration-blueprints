@@ -20,85 +20,160 @@
         ["consumer-file-transfer", "consumer-shared-db", "consumer-rpc-pull", "consumer-rpc-push", "consumer-messaging", "consumer-webhook"]
     ];
 
-    var urlSegmentPlantUmlTokenMapping = [{
-        urlSegment: "p-conformist",
-        token: "IS_PRODUCER_CONFORMIST",
-        value: "true"
-    },
-    {
-        urlSegment: "p-non-conformist",
-        token: "IS_PRODUCER_CONFORMIST",
-        value: "false"
-    },
-    {
-        urlSegment: "c-conformist",
-        token: "IS_CONSUMER_CONFORMIST",
-        value: "true"
-    },
-    {
-        urlSegment: "c-non-conformist",
-        token: "IS_CONSUMER_CONFORMIST",
-        value: "false"
-    },
-    {
-        urlSegment: "p-adapter",
-        token: "USE_PRODUCER_ADAPTER",
-        value: "true"
-    },
-    {
-        urlSegment: "p-api",
-        token: "USE_PRODUCER_API",
-        value: "true"
-    },
-    {
-        urlSegment: "c-adapter",
-        token: "USE_CONSUMER_ADAPTER",
-        value: "true"
-    },
-    {
-        urlSegment: "c-api",
-        token: "USE_CONSUMER_API",
-        value: "true"
-    }];
+    var urlSegmentPlantUmlTokenMapping = [
+        {
+            urlSegment: "producer-webhook",
+            token: "USE_PRODUCER_ADAPTER_CHANNEL",
+            value: "true"
+        }, {
+            urlSegment: "producer-webhook",
+            token: "PRODUCER_ADAPTER_CHANNEL_TYPE",
+            value: "webhook-callback"
+        }, {
+            urlSegment: "p-conformist",
+            token: "IS_PRODUCER_CONFORMIST",
+            value: "true"
+        },
+        {
+            urlSegment: "p-non-conformist",
+            token: "IS_PRODUCER_CONFORMIST",
+            value: "false"
+        },
+        {
+            urlSegment: "c-conformist",
+            token: "IS_CONSUMER_CONFORMIST",
+            value: "true"
+        },
+        {
+            urlSegment: "c-non-conformist",
+            token: "IS_CONSUMER_CONFORMIST",
+            value: "false"
+        },
+        {
+            urlSegment: "p-adapter",
+            token: "USE_PRODUCER_ADAPTER",
+            value: "true"
+        },
+        {
+            urlSegment: "p-api",
+            token: "USE_PRODUCER_API",
+            value: "true"
+        },
+        {
+            urlSegment: "c-adapter",
+            token: "USE_CONSUMER_ADAPTER",
+            value: "true"
+        },
+        {
+            urlSegment: "c-api",
+            token: "USE_CONSUMER_API",
+            value: "true"
+        }];
 
     var urls = [];
 
     // public methods and properties
     app.loadPage = function() {
-        $.ajax(
-            {
-                url: "../../data/urls.json",
-                type: 'GET',
-                success: function(data) {     
-                    urls = data.data;
-                    updateLinks();
-                    ///*
-                    //TODO: get PalmUML blocks based on URL
-                    loadBlueprint([{
-                        key: "producer_push_producer_channel"
-                    }, {
-                        key: "consumer_pull_producer_channel"
-                    }]);
-                    //*/
-                    
-                }
-            });
+        urls = getUrls();
+        updateLinks();
+        loadBlueprint(); 
     };
 
-    
-
     // private methods
-    loadBlueprint = function(blocks) {
+
+    getUrls = function(){
+        var options = [];
+
+        options.push(getOptions(config.urlOptions.producerOptions));
+        options.push(["mediation-layer"]);
+        options.push(getOptions(config.urlOptions.consumerOptions, true));
+
+        return getOptionCombos(options).map(x => x.filter(y => y != "").join("--"));
+    }
+
+    getOptionCombos = function (list, n = 0, result = [], current = []){
+        if (n === list.length) result.push(current)
+        else list[n].forEach(item => getOptionCombos(list, n+1, result, [...current, item]))
+     
+        return result
+    };
+
+    getOptions = function(config, reverse){
+        var result = [];
+        config.forEach(x => {
+            var options = [];
+    
+            if(!reverse)
+            {
+                options.push(x.urlOptionKeys);
+        
+                if(x.urlOptionValues.switchable)
+                {
+                    x.urlOptionValues.switchable.forEach(y => {
+                        options.push(y);
+                    });
+                }
+    
+                if(x.urlOptionValues.required)
+                {
+                    options.push([x.urlOptionValues.required.join('--')]);
+                }
+            
+                if(x.urlOptionValues.optional)
+                {
+                    x.urlOptionValues.optional.forEach(y => {
+                        options.push(["", y]);
+                    });
+                }
+            }
+            else
+            {
+                if(x.urlOptionValues.optional)
+                {
+                    x.urlOptionValues.optional.forEach(y => {
+                        options.push(["", y]);
+                    });
+                }
+    
+                if(x.urlOptionValues.required)
+                {
+                    options.push([x.urlOptionValues.required.join('--')]);
+                }
+    
+                if(x.urlOptionValues.switchable)
+                {
+                    x.urlOptionValues.switchable.forEach(y => {
+                        options.push(y);
+                    });
+                }
+    
+                options.push(x.urlOptionKeys);
+            }
+            
+    
+            getOptionCombos(options).forEach(x => result.push(x.filter(y => y != "").join("--")));
+        });
+
+        return result;
+    };
+
+    loadBlueprint = function() {
+        var blocks = [];
+
+        var blueprintCode = window.location.pathname.replace("index.html", "").split("/").filter(x => x).pop();
+        var blueprintComponents = blueprintCode.split("--");
+        blocks = blocks.concat(blueprintComponents.filter(x => x.startsWith("producer-") || x.startsWith("consumer-")).map(x => ({ ["key"]: x })));
+        blocks.push({ key: "integration-platform"});
         blocks.push({ key: "template"});
 
         for(var i = 0; i < blocks.length; i++) {
             (function(index){
                 $.ajax(
                     {
-                        url: "../../palmuml/" + blocks[i].key +".puml",
+                        url: "../../plantuml/" + blocks[i].key +".puml",
                         type: 'GET',
                         success: function(data) {     
-                            blocks[index].value = data;
+                            blocks[index].value = replacePlantUmlTokens(data, blueprintComponents);
                             if(blocks.filter(x => x.value == undefined) == 0) {
                                 renderBlueprint(blocks);
                             }
@@ -110,12 +185,25 @@
 
     renderBlueprint = function(blocks) {
         var pumlDiagram = blocks.find(x => x.key == "template").value;
-        blocks.pop();
+        blocks = blocks.filter(x => x.key !== "template");
 
-        pumlDiagram = pumlDiagram.replace(plantUml.content, blocks.map(x => x.value).join('\n\n'));
+        pumlDiagram = pumlDiagram.replace("<<CONTENT>>", blocks.map(x => x.value).join('\n\n'));
 
         $("#diagram").attr("src", "http://www.plantuml.com/plantuml/img/" + window.plantumlEncoder.encode(pumlDiagram));
     };
+
+    replacePlantUmlTokens = function(plantUml, components) {
+
+        components.forEach(component => {
+            var mappings = urlSegmentPlantUmlTokenMapping.filter(mapping => mapping.urlSegment == component);
+
+            mappings.forEach(mapping => {
+                plantUml = plantUml.replace("<<" + mapping.token + ">>", mapping.value);
+            });
+        });
+
+        return plantUml;
+    }
 
     updateLinks = function() {
         var blueprintCode = window.location.pathname.replace("index.html", "").split("/").filter(x => x).pop();
@@ -138,13 +226,12 @@
             }
             else if(componentIsInBlueprint && linkComponentAction == "remove") {
                 linkBlueprintComponents = linkBlueprintComponents.filter(x => x != linkComponent);
-                componentLink.children("a").attr("href", "../" + getBlueprintUrl(linkBlueprintComponents)); 
-                componentLink.show();
+                showConponentLink(linkBlueprintComponents, componentLink);
+                
             }
             else if(!componentIsInBlueprint && linkComponentAction == "add"){
                 linkBlueprintComponents.push(linkComponent);
-                componentLink.children("a").attr("href", "../" + getBlueprintUrl(linkBlueprintComponents)); 
-                componentLink.show();
+                showConponentLink(linkBlueprintComponents, componentLink);
                 
                 var componentContainer = componentLink.parents(".grid-container-component");
                 componentContainer.css( "background-color", "#aaaaaa");
@@ -154,75 +241,12 @@
             else if(!componentIsInBlueprint && linkComponentAction == "replace"){
                 linkBlueprintComponents = linkBlueprintComponents.filter(x => !linkAlternativeComponents.includes(x));
                 linkBlueprintComponents.push(linkComponent);
-                componentLink.children("a").attr("href", "../" + getBlueprintUrl(linkBlueprintComponents)); 
-                componentLink.show();
-            }
-        });
-
-        var dataContractLinks = $("a[id$='-data-contract']");
-        dataContractLinks.each(i => {
-            var dataContractLink = $(dataContractLinks[i]);
-            var dataContractLinkId = dataContractLink.attr("id");
-            var dataContracts = dataContractLinkId.split("--")[1].split("+");
-            var dataContractAction = dataContractLinkId.split("--")[0];
-            var linkBlueprintComponents = blueprintComponents.map((x) => x);
-            var dataContractIsInBlueprint = blueprintComponents.find(x => dataContracts.find(y => y == x));
-
-            if(dataContractIsInBlueprint && dataContractAction == "replace"){
-                linkBlueprintComponents = linkBlueprintComponents.filter(x => !dataContracts.includes(x));
-                var linkDataContractReplacement = dataContractLinkId.split("--")[2];
-                linkBlueprintComponents.push(linkDataContractReplacement);
-                dataContractLink.attr("href", "../" + getBlueprintUrl(linkBlueprintComponents)); 
-                dataContractLink.show();
-            }
-        });
-
-        var dataContractSpans = $("span[id$='-data-contract']");
-        dataContractSpans.each(i => {
-            var dataContractSpan = $(dataContractSpans[i]);
-            var dataContractSpanId = dataContractSpan.attr("id");
-            var dataContract = dataContractSpanId.split("--")[1];
-            var dataContractAction = dataContractSpanId.split("--")[0];
-            var dataContractIsInBlueprint = blueprintComponents.find(x => x == dataContract);
-
-            if(dataContractIsInBlueprint && dataContractAction == "show") { 
-                dataContractSpan.show();
-            }
-        });
-
-        var channelLinks = $("a[id$='-channel']");
-        channelLinks.each(i => {
-            var channelLink = $(channelLinks[i]);
-            var channelLinkId = channelLink.attr("id");
-            var channels = channelLinkId.split("--")[1].split("+");
-            var channelAction = channelLinkId.split("--")[0];
-            var linkBlueprintComponents = blueprintComponents.map((x) => x);
-            var channelIsInBlueprint = blueprintComponents.find(x => channels.find(y => y == x));
-
-            if(channelIsInBlueprint && channelAction == "replace"){
-                linkBlueprintComponents = linkBlueprintComponents.filter(x => !channels.includes(x));
-                var linkchannelReplacement = channelLinkId.split("--")[2];
-                linkBlueprintComponents.push(linkchannelReplacement);
-                channelLink.attr("href", "../" + getBlueprintUrl(linkBlueprintComponents)); 
-                channelLink.show();
-            }
-        });
-
-        var channelSpans = $("span[id$='-channel']");
-        channelSpans.each(i => {
-            var channelSpan = $(channelSpans[i]);
-            var channelSpanId = channelSpan.attr("id");
-            var channel = channelSpanId.split("--")[1];
-            var channelAction = channelSpanId.split("--")[0];
-            var channelIsInBlueprint = blueprintComponents.find(x => x == channel);
-
-            if(channelIsInBlueprint && channelAction == "show") { 
-                channelSpan.show();
+                showConponentLink(linkBlueprintComponents, componentLink);
             }
         });
     };
 
-    getBlueprintUrl = function(blueprintComponents) {
+    showConponentLink = function(blueprintComponents, componentLink) {
         var urlSegments = [];
         urlOptions.forEach((urlOptionsSegment) => {
                 urlOptionsSegment.every((segment) => {
@@ -236,7 +260,13 @@
             }
         )
 
-        return urlSegments.filter(segment => segment != "").join("--");
+        var url = urlSegments.filter(segment => segment != "").join("--");
+
+        if(urls.includes(url))
+        {
+            componentLink.children("a").attr("href", "../" + url); 
+            componentLink.show();
+        }
     };
 
     // check to evaluate whether "app" exists in the 

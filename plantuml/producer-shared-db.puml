@@ -4,7 +4,7 @@
    !$producer_output_msg_contract = "Canonical"
 !endif
 !$producer_output_msg_type = "Message"
-!$use_producer_channel = "false"
+!$use_producer_channel = "true"
 
 package "Producer" {
     TransactionalProducer(producer, "Producer")

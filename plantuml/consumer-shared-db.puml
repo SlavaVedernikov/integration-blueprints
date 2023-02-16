@@ -4,7 +4,7 @@
    !$consumer_input_msg_contract = "Canonical"
 !endif
 !$consumer_input_msg_type = "Message"
-!$use_consumer_channel = "false"
+!$use_consumer_channel = "true"
 
 package "Consumer" {
     TransactionalConsumer(consumer, "Consumer")

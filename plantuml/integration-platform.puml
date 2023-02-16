@@ -2,28 +2,59 @@
 !$use_producer_api = "<<USE_PRODUCER_API>>"
 !$use_consumer_adapter = "<<USE_CONSUMER_ADAPTER>>"
 !$use_consumer_api = "<<USE_CONSUMER_API>>"
+!$use_producer_adapter_channel = "<<USE_PRODUCER_ADAPTER_CHANNEL>>"
+!$producer_adapter_channel_type = "<<PRODUCER_ADAPTER_CHANNEL_TYPE>>"
 
 package "Integration Platform" {
    !if ($use_producer_adapter == "true")
       package "Producer Adapter" {
          Message(producer_adapter_output_msg, "\nMessage\n(Canonical)")
-
-         !if ($is_producer_conformist  == "true")
-            !if ($use_producer_channel == "true")
-               producer_channel -down-> producer_adapter_output_msg
+         !if ($use_producer_adapter_channel == "true")
+            !if ($producer_adapter_channel_type == "webhook-callback")
+               ServiceActivator(producer_adapter_channel, "Webhook (Callback)")
             !else
-               producer_output_msg -down-> producer_adapter_output_msg
+               MsgChannel(producer_adapter_channel, "Producer Adapter Channel")
+            !endif
+
+            !if ($is_producer_conformist  == "true")
+               !if ($use_producer_channel == "true")
+                  producer_channel -down-> producer_adapter_channel
+                  producer_adapter_channel -down-> producer_adapter_output_msg
+               !else
+                  producer_output_msg -down-> producer_adapter_channel
+                  producer_adapter_channel -down-> producer_adapter_output_msg
+               !endif
+            !else
+               Message(producer_adapter_input_msg, "\n$producer_output_msg_type\n($producer_output_msg_contract)")
+               MessageTranslator(producer_adapter_translator,"Translate")
+               !if ($use_producer_channel == "true")
+                  producer_channel -down-> producer_adapter_channel
+                  producer_adapter_channel -down-> producer_adapter_input_msg
+               !else
+                  producer_output_msg -down-> producer_adapter_channel
+                  producer_adapter_channel -down-> producer_adapter_input_msg
+               !endif
+               producer_adapter_input_msg -down-> producer_adapter_translator
+               producer_adapter_translator -down-> producer_adapter_output_msg
             !endif
          !else
-            Message(producer_adapter_input_msg, "\n$producer_output_msg_type\n($producer_output_msg_contract)")
-            MessageTranslator(producer_adapter_translator,"Translate")
-            !if ($use_producer_channel == "true")
-               producer_channel -down-> producer_adapter_input_msg
+            !if ($is_producer_conformist  == "true")
+               !if ($use_producer_channel == "true")
+                  producer_channel -down-> producer_adapter_output_msg
+               !else
+                  producer_output_msg -down-> producer_adapter_output_msg
+               !endif
             !else
-               producer_output_msg -down-> producer_adapter_input_msg
+               Message(producer_adapter_input_msg, "\n$producer_output_msg_type\n($producer_output_msg_contract)")
+               MessageTranslator(producer_adapter_translator,"Translate")
+               !if ($use_producer_channel == "true")
+                  producer_channel -down-> producer_adapter_input_msg
+               !else
+                  producer_output_msg -down-> producer_adapter_input_msg
+               !endif
+               producer_adapter_input_msg -down-> producer_adapter_translator
+               producer_adapter_translator -down-> producer_adapter_output_msg
             !endif
-            producer_adapter_input_msg -down-> producer_adapter_translator
-            producer_adapter_translator -down-> producer_adapter_output_msg
          !endif
       }
    !endif
@@ -53,7 +84,11 @@ package "Integration Platform" {
 
    !if ($use_consumer_api == "true")
       package "Consumer API" {
-         
+         ServiceActivator(consumer_api_webhook_subscribe_channel, "Webhook (Subscribe)")
+         TransactionalConsumer(intermediary_consumer, "Intermediary Consumer")
+         consumer_api_webhook_subscribe_channel -right-> intermediary_consumer
+         mediation_layer_output_msg -down-> intermediary_consumer
+         intermediary_consumer -down-> consumer_channel
       }
    !endif
 

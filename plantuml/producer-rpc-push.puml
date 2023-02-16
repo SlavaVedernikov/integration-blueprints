@@ -1,4 +1,4 @@
-!$is_producer_conformist = "true"
+!$is_producer_conformist = "<<IS_PRODUCER_CONFORMIST>>"
 !$producer_output_msg_contract = "Producer"
 !if ($is_producer_conformist == "true")
    !$producer_output_msg_contract = "Canonical"
