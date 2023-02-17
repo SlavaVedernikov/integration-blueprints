@@ -75,13 +75,22 @@
                     ]}
             }, {
                 "urlOptionKeys": [
-                    "consumer-rpc-pull",
-                    "consumer-webhook"
+                    "consumer-webhook",
+                    "consumer-rpc-pull"
                 ],
                 "urlOptionValues": {
                     "required": [
                         "c-api",
                         "c-conformist"
+                    ]}
+            }, {
+                "urlOptionKeys": [
+                    "consumer-rpc-pull"
+                ],
+                "urlOptionValues": {
+                    "required": [
+                        "c-adapter",
+                        "c-non-conformist"
                     ]}
             }]
     };

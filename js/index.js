@@ -241,12 +241,12 @@
             else if(!componentIsInBlueprint && linkComponentAction == "replace"){
                 linkBlueprintComponents = linkBlueprintComponents.filter(x => !linkAlternativeComponents.includes(x));
                 linkBlueprintComponents.push(linkComponent);
-                showConponentLink(linkBlueprintComponents, componentLink);
+                showConponentLink(linkBlueprintComponents, componentLink, linkComponent);
             }
         });
     };
 
-    showConponentLink = function(blueprintComponents, componentLink) {
+    showConponentLink = function(blueprintComponents, componentLink, linkComponent) {
         var urlSegments = [];
         urlOptions.forEach((urlOptionsSegment) => {
                 urlOptionsSegment.every((segment) => {
@@ -267,7 +267,81 @@
             componentLink.children("a").attr("href", "../" + url); 
             componentLink.show();
         }
+        else
+        {
+            url = getAlternativeComponentLink(url, linkComponent);
+            if(urls.includes(url))
+            {
+                componentLink.children("a").attr("href", "../" + url); 
+                componentLink.show();
+            }
+        }
     };
+
+    getAlternativeComponentLink = function(url, linkComponent) {
+        if(!linkComponent) return url;
+
+        var result = url;
+        var options = [];
+        var partialUrl = "";
+        var mediatioLayerUrlSegment = "--mediation-layer--";
+        if(linkComponent.startsWith("producer-"))
+        {
+            options.push(
+                getOptions(
+                    config.urlOptions.consumerOptions.filter(
+                        x => x.urlOptionKeys.includes(linkComponent)).map(
+                            x => ({ urlOptionKeys: [linkComponent], urlOptionValues: x.urlOptionValues}))));
+            
+            partialUrl = url.substring(0, url.indexOf(mediatioLayerUrlSegment));
+
+        }
+        else if(["p-non-conformist", "p-conformist"].includes(linkComponent))
+        {
+            var integrationStyle = url.split("--")[0];
+            options.push(
+                getOptions(
+                    config.urlOptions.consumerOptions.filter(
+                        x => x.urlOptionKeys.includes(integrationStyle) && x.urlOptionValues.required && x.urlOptionValues.required.includes(linkComponent)).map(
+                            x => ({ urlOptionKeys: [integrationStyle], urlOptionValues: x.urlOptionValues}))));
+            
+            partialUrl = url.substring(0, url.indexOf(mediatioLayerUrlSegment));
+
+        }
+        else if(linkComponent.startsWith("consumer-"))
+        {
+            options.push(
+                getOptions(
+                    config.urlOptions.consumerOptions.filter(
+                        x => x.urlOptionKeys.includes(linkComponent)).map(
+                            x => ({ urlOptionKeys: [linkComponent], urlOptionValues: x.urlOptionValues})), true));
+            var startIndex = url.indexOf(mediatioLayerUrlSegment) + mediatioLayerUrlSegment.length;
+            partialUrl = url.substring(startIndex, url.length);
+                            
+        }
+        else if(["c-non-conformist", "c-conformist"].includes(linkComponent))
+        {
+            var integrationStyle = url.split("--").pop();
+            options.push(
+                getOptions(
+                    config.urlOptions.consumerOptions.filter(
+                        x => x.urlOptionKeys.includes(integrationStyle) && x.urlOptionValues.required && x.urlOptionValues.required.includes(linkComponent)).map(
+                            x => ({ urlOptionKeys: [integrationStyle], urlOptionValues: x.urlOptionValues})), true));
+            
+            var startIndex = url.indexOf(mediatioLayerUrlSegment) + mediatioLayerUrlSegment.length;
+            partialUrl = url.substring(startIndex, url.length);
+
+        }
+
+        var alternativeUrls = getOptionCombos(options).map(x => x.filter(y => y != "").join("--"));
+
+        if(alternativeUrls.length > 0)
+        {
+            result = url.replace(partialUrl, alternativeUrls[0]);
+        }
+
+        return result;
+    }
 
     // check to evaluate whether "app" exists in the 
     // global app - if not, assign window.app an 
