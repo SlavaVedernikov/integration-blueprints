@@ -8,7 +8,9 @@
 package "Integration Platform" {
    !if ($use_producer_adapter == "true")
       package "Producer Adapter" {
-         Message(producer_adapter_output_msg, "\nMessage\n(Canonical)")
+         !$producer_adapter_output_msg_type = "Message"
+         !$producer_adapter_output_msg_contract = "Canonical"
+         Message(producer_adapter_output_msg, "\n$producer_adapter_output_msg_type\n($producer_adapter_output_msg_contract)")
          !if ($use_producer_adapter_channel == "true")
             !if ($producer_adapter_channel_type == "webhook-callback")
                ServiceActivator(producer_adapter_channel, "Webhook (Callback)")
@@ -40,9 +42,21 @@ package "Integration Platform" {
          !else
             !if ($is_producer_conformist  == "true")
                !if ($use_producer_channel == "true")
-                  producer_channel -down-> producer_adapter_output_msg
+                  !if ($producer_output_msg_type == $producer_adapter_output_msg_type)
+                     producer_channel -down-> producer_adapter_output_msg
+                  !else
+                     Message(producer_adapter_input_msg, "\n$producer_output_msg_type\n($producer_adapter_output_msg_contract)")
+                     producer_channel -down-> producer_adapter_input_msg
+                     producer_adapter_input_msg -down-> producer_adapter_output_msg
+                  !endif
                !else
-                  producer_output_msg -down-> producer_adapter_output_msg
+                  !if ($producer_output_msg_type == $producer_adapter_output_msg_type)
+                     producer_output_msg -down-> producer_adapter_output_msg
+                  !else
+                     Message(producer_adapter_input_msg, "\n$producer_output_msg_type\n($producer_adapter_output_msg_contract)")
+                     producer_output_msg -down-> producer_adapter_input_msg
+                     producer_adapter_input_msg -down-> producer_adapter_output_msg
+                  !endif
                !endif
             !else
                Message(producer_adapter_input_msg, "\n$producer_output_msg_type\n($producer_output_msg_contract)")
@@ -61,7 +75,9 @@ package "Integration Platform" {
 
    !if ($use_producer_api == "true")
       package "Producer API" {
-         Message(producer_api_output_msg, "\nMessage\n(Canonical)")
+         !$producer_api_output_msg_type = "Message"
+         !$producer_api_output_msg_contract = "Canonical"
+         Message(producer_api_output_msg, "\n$producer_api_output_msg_type\n(producer_api_output_msg_contract)")
 
          !if ($use_producer_adapter == "true")
             producer_adapter_output_msg -down-> producer_api_output_msg
@@ -72,8 +88,10 @@ package "Integration Platform" {
    !endif
 
    package "Mediation Layer" {
+      !$mediation_layer_output_msg_type = "Message"
+      !$mediation_layer_output_msg_contract = "Canonical"
       PubSubChannel(mediation_layer_channel, "Pub/Sub Channel")
-      Message(mediation_layer_output_msg, "\nMessage\n(Canonical)")
+      Message(mediation_layer_output_msg, "\n$mediation_layer_output_msg_type\n($mediation_layer_output_msg_contract)")
       !if ($use_producer_api == "true")
          producer_api_output_msg -down-> mediation_layer_channel
       !elseif ($use_producer_adapter == "true")
@@ -94,12 +112,20 @@ package "Integration Platform" {
 
    !if ($use_consumer_adapter == "true")
       package "Consumer Adapter" {
+         !$consumer_adapter_input_msg_type = "Message"
+         !$consumer_adapter_input_msg_contract = "Canonical"
          Message(consumer_adapter_output_msg, "\n$consumer_input_msg_type\n($consumer_input_msg_contract)")
 
          !if ($is_consumer_conformist  == "true")
-           mediation_layer_output_msg -down-> consumer_adapter_output_msg
+            !if ($consumer_adapter_input_msg_type == $consumer_input_msg_type)
+               mediation_layer_output_msg -down-> consumer_adapter_output_msg
+            !else
+               Message(consumer_adapter_input_msg, "\n$consumer_adapter_input_msg_type\n($consumer_adapter_input_msg_contract)")
+               mediation_layer_output_msg -down-> consumer_adapter_input_msg
+               consumer_adapter_input_msg -down-> consumer_adapter_output_msg
+            !endif
          !else
-            Message(consumer_adapter_input_msg, "\nMessage\n(Canonical)")
+            Message(consumer_adapter_input_msg, "\n$consumer_adapter_input_msg_type\n($consumer_adapter_input_msg_contract)")
             MessageTranslator(consumer_adapter_translator,"Translate")
             mediation_layer_output_msg  -down-> consumer_adapter_input_msg
             consumer_adapter_input_msg -down-> consumer_adapter_translator

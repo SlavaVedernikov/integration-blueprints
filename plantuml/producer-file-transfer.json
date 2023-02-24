@@ -1,0 +1,60 @@
+{
+   "data": [
+      {
+         "component": "Producer",
+         "comments": [
+            {
+               "condition": {
+                  "token": "IS_PRODUCER_CONFORMIST",
+                  "value": "true"
+               },
+               "values": [{
+                     "index": "1",
+                     "comment": "Producer makes data available/accessible in **Producer-specific** structure/schema."
+                  },{
+                     "index": "2",
+                     "comment": "<<TRANSLATOR>> translates/transforms data from **Producer-specific** structure/schema into <<CANONICAL>> format (e.g. JSON) and <<CANONICAL>> structure/schema."
+                  }
+               ],
+               "comments": [
+                  {
+                     "condition": {
+                        "token": "USE_PRODUCER_CHANNEL",
+                        "value": "true"
+                     },
+                     "values": [{
+                           "index": "3",
+                           "comment": "Producer publishes data in <<CANONICAL>> file format (e.g. JSON) and <<CANONICAL>> structure/schema to Producer Channel (e.g. FTP)."
+                        }
+                     ]
+                  }
+               ]
+            },
+            {
+               "condition": {
+                  "token": "IS_PRODUCER_CONFORMIST",
+                  "value": "false"
+               },
+               "values": [{
+                     "index": "1",
+                     "comment": "Producer exports data in **Producer-specific** file format (e.g. CSV, XML, JSON etc.) and in **Producer-specific** structure/schema."
+                  }
+               ],
+               "comments": [
+                  {
+                     "condition": {
+                        "token": "USE_PRODUCER_CHANNEL",
+                        "value": "true"
+                     },
+                     "values": [{
+                           "index": "2",
+                           "comment": "Producer publishes file to Producer Channel (e.g. FTP)."
+                        }
+                     ]
+                  }
+               ]
+            }
+         ]
+      }
+   ]
+}

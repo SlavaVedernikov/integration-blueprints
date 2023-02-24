@@ -1,7 +1,7 @@
 @startuml
 !includeurl https://raw.githubusercontent.com/plantuml-stdlib/EIP-PlantUML/main/dist/EIP-PlantUML.puml
 
-skinparam ArrowFontSize 18
+skinparam ArrowFontSize 20
 
 <style>
 package {

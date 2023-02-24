@@ -16,7 +16,7 @@ package "Producer" {
     
     !if ($is_producer_conformist  == "true")
       MessageTranslator(producer_translator,"Translate")
-      Message(producer_input_msg, "\n$producer_output_msg_type\n(Producer)")
+      Message(producer_input_msg, "\nData\n(Producer)")
       producer -down-> "<<1>>" producer_input_msg
       producer_input_msg-down-> producer_translator
       producer_translator -down-> "<<2>>" producer_output_msg

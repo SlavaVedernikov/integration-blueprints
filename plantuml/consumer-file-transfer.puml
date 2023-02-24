@@ -23,7 +23,6 @@ package "Consumer" {
       consumer_input_msg -down-> "<<1>>" consumer_translator
       consumer_translator -down-> "<<2>>" consumer_translator_output_msg
       consumer_translator_output_msg -down-> "<<3>>" consumer
-      
     !else
       !if ($use_consumer_channel == "true")
          consumer_channel -down-> consumer_input_msg 

@@ -3,7 +3,8 @@
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Integration Blueprints</title>
+        <meta id="meta-description" name="description" content="Integration Blueprints">
+        <title id="meta-title">Integration Blueprints</title>
         <link href="https://unpkg.com/@primer/css@^20.2.4/dist/primer.css" rel="stylesheet" />
         <link rel="stylesheet" href="../../css/styles.css">
     </head>
@@ -166,12 +167,22 @@
                 </div>
             </div>
         </div>
-
-        <img src="" alt="" id="diagram">
+        
+        <div class="row">
+            <div class="column">
+                <img src="" alt="" id="diagram">
+            </div>
+            <div class="column">
+                <div id="diagram-comments-anchor"></div>
+                <div id="diagram-comments"></div>
+            </div>
+        </div>
+        
 
         
         <script src="../../bower_components/jquery/dist/jquery.min.js"></script>
         <script src="//cdn.rawgit.com/jmnote/plantuml-encoder/d133f316/dist/plantuml-encoder.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/showdown@2.0.3/dist/showdown.min.js"></script>
         <script src="../../js/config.js"></script>
         <script src="../../js/index.js"></script>
         <script>
@@ -188,5 +199,31 @@
 
             app.loadPage();
         </script>
+            <script>
+                function keepDiagramCommentsOnTop() {
+                  var windowTop = $(window)
+                    .scrollTop();
+                  var top = $('#diagram-comments-anchor')
+                    .offset()
+                    .top;
+                  if(windowTop > top) {
+                    $('#diagram-comments')
+                      .addClass('sticky');
+                    $('#diagram-comments-anchor')
+                      .height($('#diagram-comments')
+                        .outerHeight());
+                  } else {
+                    $('#diagram-comments')
+                      .removeClass('sticky');
+                    $('#diagram-comments-anchor')
+                      .height(0);
+                  }
+                }
+                $(function() {
+                  $(window)
+                    .scroll(keepDiagramCommentsOnTop);
+                    keepDiagramCommentsOnTop();
+                });
+              </script>
     </body>
 </html>
