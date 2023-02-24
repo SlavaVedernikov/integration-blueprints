@@ -123,7 +123,7 @@
             value: "Integration Blueprint: <<PRODUCER_CONTRACT_TYPE>> Producer <<PRODUCER_INTEGRATION_STYLE>>, <<CONSUMER_CONTRACT_TYPE>> Consumer - <<CONSUMER_INTEGRATION_STYLE>>"
         },{
             key: "description",
-            value: "Producer is <<PRODUCER_CONTRACT_TYPE>> in relation to Canonical Data Exchange Contract. <<PRODUCER_INTEGRATION_STYLE>> is a prefered integration style of a Producer. Consumer is <<CONSUMER_CONTRACT_TYPE>> in relation to Canonical Data Exchange Contract. <<CONSUMER_INTEGRATION_STYLE>>  is a prefered integration style of a Consumer."
+            value: "Producer is <<PRODUCER_CONTRACT_TYPE>> in relation to Canonical Data Exchange Contract. <<PRODUCER_INTEGRATION_STYLE>> is a preferred integration style of a Producer. Consumer is <<CONSUMER_CONTRACT_TYPE>> in relation to Canonical Data Exchange Contract. <<CONSUMER_INTEGRATION_STYLE>>  is a preferred integration style of a Consumer."
         },
         {
             key: "description",
@@ -133,7 +133,7 @@
         {
             key: "description",
             urlSegment: "p-api",
-            value: "Producer API is used as a facade between Producer and/or Producer Adapter and the Mediation Layer."
+            value: "Producer API is used as a façade between Producer and/or Producer Adapter and the Mediation Layer."
         },
         {
             key: "description",
@@ -143,7 +143,7 @@
         {
             key: "description",
             urlSegment: "c-api",
-            value: "Consumer API is used as a facade between Consumer and/or Consumer Adapter and the Mediation Layer."
+            value: "Consumer API is used as a façade between Consumer and/or Consumer Adapter and the Mediation Layer."
         }],
         mappings: [{
             urlSegment: "producer-file-transfer",
