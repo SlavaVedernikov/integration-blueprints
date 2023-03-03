@@ -289,6 +289,22 @@
         loadBlueprint(); 
     };
 
+    app.getUrlOption = function(options) {
+        urls = getUrls();
+        var result = getUrl(options);
+
+        if(!urls.includes(result))
+        {
+            result = getComplementaryUrl(options);
+            if(!urls.includes(result))
+            {
+                result = "#"; 
+            } 
+        }
+
+        return result;
+    }
+
     // private methods
 
     getUrls = function(){
@@ -564,11 +580,11 @@
         });
     };
 
-    showConponentLink = function(blueprintComponents, componentLink, linkComponent) {
+    getUrlFromOptions = function(options) {
         var urlSegments = [];
         urlOptions.forEach((urlOptionsSegment) => {
                 urlOptionsSegment.every((segment) => {
-                    if(blueprintComponents.find(component => component == segment)) {
+                    if(options.find(component => component == segment)) {
                         urlSegments.push(segment);
                         return false;
                     }
@@ -578,25 +594,98 @@
             }
         )
 
-        var url = urlSegments.filter(segment => segment != "").join("--");
+        return urlSegments.filter(segment => segment != "").join("--");
+    };
 
+    getUrl = function(blueprintComponents, linkComponent) {
+        var result = "#";
+
+        if(!blueprintComponents || blueprintComponents.length == 0)
+            return result;
+
+        result = getUrlFromOptions(blueprintComponents);
+
+        if(!urls.includes(result))
+        {
+            result = "#";
+            if(linkComponent)
+            {
+                result = getAlternativeComponentLink(blueprintComponents, linkComponent);
+                if(!urls.includes(result))
+                {
+                    result = "#"; 
+                } 
+            }          
+        }
+
+        return result;
+    }
+
+    showConponentLink = function(blueprintComponents, componentLink, linkComponent) {
+        var url = getUrl(blueprintComponents, linkComponent);
         if(urls.includes(url))
         {
             componentLink.children("a").attr("href", "../" + url); 
             componentLink.show();
         }
-        else
-        {
-            url = getAlternativeComponentLink(url, linkComponent);
-            if(urls.includes(url))
-            {
-                componentLink.children("a").attr("href", "../" + url); 
-                componentLink.show();
-            }
-        }
+        
     };
 
-    getAlternativeComponentLink = function(url, linkComponent) {
+    getComplementaryUrl = function(options) {
+        var result = getUrlFromOptions(options);
+        
+        var mediatioLayerUrlSegment = "--mediation-layer--";
+        var producerPartialUrl = result.substring(0, result.indexOf(mediatioLayerUrlSegment));
+        var consumerPartialUrl = result.substring(result.indexOf(mediatioLayerUrlSegment) + mediatioLayerUrlSegment.length, result.length);
+        var producerOptionKey = producerPartialUrl.split("--")[0];
+        var consumerOptionKey = consumerPartialUrl.split("--").pop();
+        var producerOptions = [];
+        var consumerOptions = [];
+
+        producerOptions = getOptions(
+            config.urlOptions.producerOptions.filter(
+                x => x.urlOptionKeys.includes(producerOptionKey)).map(
+                    x => ({ urlOptionKeys: [producerOptionKey], urlOptionValues: x.urlOptionValues})));
+            
+
+        consumerOptions = getOptions(
+                config.urlOptions.consumerOptions.filter(
+                    x => x.urlOptionKeys.includes(consumerOptionKey)).map(
+                        x => ({ urlOptionKeys: [consumerOptionKey], urlOptionValues: x.urlOptionValues})), true);
+
+        result = getBestComplementaryUrlOption(producerPartialUrl, producerOptions) + 
+            mediatioLayerUrlSegment + 
+            getBestComplementaryUrlOption(consumerPartialUrl, consumerOptions, true)
+        
+        return result;
+    
+    };
+
+    getBestComplementaryUrlOption = function(url, options, reverse)
+    {
+        var result = (reverse ? options.filter(x => x.endsWith(url)) : options.filter(x => x.startsWith(url)));
+
+        result = result.map(x => ({ url: x, numberOfSegments: x.split("--").length}))
+
+        var result = result.reduce(function(prev, curr) {
+            return prev.numberOfSegments <= curr.numberOfSegments ? prev : curr;
+        });
+
+        if(result)
+        {
+            result = result.url;
+        }
+        else
+        {
+            result = url;
+        }
+
+        return result;
+
+    }
+
+    getAlternativeComponentLink = function(blueprintComponents, linkComponent) {
+        var url = getUrlFromOptions(blueprintComponents);
         if(!linkComponent) return url;
 
         var result = url;
@@ -607,7 +696,7 @@
         {
             options.push(
                 getOptions(
-                    config.urlOptions.consumerOptions.filter(
+                    config.urlOptions.producerOptions.filter(
                         x => x.urlOptionKeys.includes(linkComponent)).map(
                             x => ({ urlOptionKeys: [linkComponent], urlOptionValues: x.urlOptionValues}))));
             
@@ -619,7 +708,7 @@
             var integrationStyle = url.split("--")[0];
             options.push(
                 getOptions(
-                    config.urlOptions.consumerOptions.filter(
+                    config.urlOptions.producerOptions.filter(
                         x => x.urlOptionKeys.includes(integrationStyle) && x.urlOptionValues.required && x.urlOptionValues.required.includes(linkComponent)).map(
                             x => ({ urlOptionKeys: [integrationStyle], urlOptionValues: x.urlOptionValues}))));
             

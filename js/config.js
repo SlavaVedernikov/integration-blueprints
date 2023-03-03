@@ -24,28 +24,7 @@
                     ]}
             }, {
                 "urlOptionKeys": [
-                    "producer-rpc-push"
-                ],
-                "urlOptionValues": {
-                    "required": [
-                        "p-non-conformist",
-                        "p-adapter"
-                        
-                    ],
-                    "optional": [
-                        "p-api"
-                    ]}
-            }, {
-                "urlOptionKeys": [
-                    "producer-rpc-push"
-                ],
-                "urlOptionValues": {
-                    "required": [
-                        "p-conformist",
-                        "p-api"
-                    ]}
-            }, {
-                "urlOptionKeys": [
+                    "producer-rpc-push",
                     "producer-webhook"
                 ],
                 "urlOptionValues": {
@@ -57,7 +36,17 @@
                     "optional": [
                         "p-api"
                     ]}
-            }      
+            }, {
+                "urlOptionKeys": [
+                    "producer-rpc-push",
+                    "producer-webhook"
+                ],
+                "urlOptionValues": {
+                    "required": [
+                        "p-conformist",
+                        "p-api"
+                    ]}
+            }
         ],
         "consumerOptions": [{
                 "urlOptionKeys": [

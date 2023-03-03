@@ -9,6 +9,158 @@
     </head>
     <body>
         <h1>Integration Blueprints specification</h1>
-        <a href="explore/producer-file-transfer--p-conformist--p-adapter--mediation-layer--c-adapter--c-conformist--consumer-file-transfer">Try It</a>
+        <div class="grid-container-blueprint-short">
+            <div class="producer">
+                <div class="grid-container-component">
+                    <div class="component-header">Producer</div>
+                    <div class="component-icon">
+                        <div>
+                            <img src="../../sprites/transactional_producer.png" alt="Producer">
+                        </div>
+                        <div>
+                            <img style="opacity: 0.5;" src="../../sprites/message_translator.png" alt="Producer">
+                        </div>
+                    </div>
+                    <div class="component-links">
+                        <strong>Integration style:</strong>
+                        <br/>
+                        <div class="centered-content">
+                            <input type="radio" id="producer-file-transfer" name="producer-integration-style" value="producer-file-transfer" checked>
+                            <label for="producer-file-transfer">File Transfer</label><br>
+                            <input type="radio" id="producer-shared-db" name="producer-integration-style" value="producer-shared-db">
+                            <label for="producer-shared-db">Shared Database</label><br>
+                            <input type="radio" id="producer-rpc-pull" name="producer-integration-style" value="producer-rpc-pull">
+                            <label for="producer-rpc-pull">Remote Procedure Call (Pull)</label><br>
+                            <input type="radio" id="producer-rpc-push" name="producer-integration-style" value="producer-rpc-push">
+                            <label for="producer-rpc-push">Remote Procedure Call (Push)</label><br>
+                            <input type="radio" id="producer-messaging" name="producer-integration-style" value="producer-messaging">
+                            <label for="producer-messaging">Messaging</label><br>
+                            <input type="radio" id="producer-webhook" name="producer-integration-style" value="producer-webhook">
+                            <label for="producer-webhook">Webhook (subscribe)</label>
+                        </div>
+                        <br/>
+                        <strong>Data Exchange Contract:</strong>
+                        <br/>
+                        <div class="centered-content">
+                            <input type="radio" id="p-non-conformist" name="producer-contract" value="p-non-conformist" checked>
+                            <label for="p-non-conformist">Producer</label><br>
+                            <input type="radio" id="p-conformist" name="producer-contract" value="p-conformist">
+                            <label for="p-conformist">Canonical (Common)</label><br>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="mediation-layer">
+                <div class="grid-container-component">
+                    <div class="component-header">Integration Platform</div>
+                    <div class="component-icon">
+                        <div class="row">
+                            <div class="column" style="width: 33.33%;">
+                                <div>
+                                    <img style="opacity: 0.5;" src="../../sprites/channel_adapter_left.png" alt="Producer Adapter">
+                                </div>
+                                <div>
+                                    <img style="opacity: 0.5;" src="../../sprites/message_translator.png" alt="Producer Adapter">
+                                </div>
+                                <div>
+                                    <img style="opacity: 0.5;" src="../../sprites/service_activator.png" alt="API">
+                                </div>
+                            </div>
+                            <div class="column" style="width: 33.33%;">
+                                <div>
+                                    <img src="../../sprites/message_store.png" alt="Message Store">
+                                </div>
+                                <div>
+                                    <img src="../../sprites/recipient_list.png" alt="Recipient List">
+                                </div>
+                                <div>
+                                    <img src="../../sprites/message_filter.png" alt="Message Filter">
+                                </div>
+                            </div>
+                            <div class="column" style="width: 33.33%;">
+                                <div>
+                                    <img style="opacity: 0.5;" src="../../sprites/channel_adapter_right.png" alt="Consumer Adapter">
+                                </div>
+                                <div>
+                                    <img style="opacity: 0.5;" src="../../sprites/message_translator.png" alt="Producer Adapter">
+                                </div>
+                                <div>
+                                    <img style="opacity: 0.5;" src="../../sprites/service_activator.png" alt="API">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="consumer">
+                <div class="grid-container-component">
+                    <div class="component-header">Consumer</div>
+                    <div class="component-icon">
+                        <div>
+                            <img src="../../sprites/transactional_consumer.png" alt="Consumer">
+                        </div>
+                        <div>
+                            <img style="opacity: 0.5;" src="../../sprites/message_translator.png" alt="Consumer">
+                        </div>
+                    </div>
+                    <div class="component-links">                
+                        <strong>Integration style:</strong>
+                        <br/>
+                        <div class="centered-content">
+                            <input type="radio" id="consumer-file-transfer" name="consumer-integration-style" value="consumer-file-transfer" checked>
+                            <label for="consumer-file-transfer">File Transfer</label><br>
+                            <input type="radio" id="consumer-shared-db" name="consumer-integration-style" value="consumer-shared-db">
+                            <label for="consumer-shared-db">Shared Database</label><br>
+                            <input type="radio" id="consumer-rpc-pull" name="consumer-integration-style" value="consumer-rpc-pull">
+                            <label for="consumer-rpc-pull">Remote Procedure Call (Pull)</label><br>
+                            <input type="radio" id="consumer-rpc-push" name="consumer-integration-style" value="consumer-rpc-push">
+                            <label for="consumer-rpc-push">Remote Procedure Call (Push)</label><br>
+                            <input type="radio" id="consumer-messaging" name="consumer-integration-style" value="consumer-messaging">
+                            <label for="consumer-messaging">Messaging</label><br>
+                            <input type="radio" id="consumer-webhook" name="consumer-integration-style" value="consumer-webhook">
+                            <label for="consumer-webhook">Webhook (callback)</label>
+                        </div>
+                        <br/>
+                        <strong>Data Exchange Contract:</strong>
+                        <br/>
+                        <div class="centered-content">
+                            <input type="radio" id="c-non-conformist" name="consumer-contract" value="c-non-conformist" checked>
+                            <label for="c-non-conformist">Consumer</label><br>
+                            <input type="radio" id="c-conformist" name="consumer-contract" value="c-conformist">
+                            <label for="c-conformist">Canonical (Common)</label><br>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <a id="try-it-link" href="explore/producer-file-transfer--p-conformist--p-adapter--mediation-layer--c-adapter--c-conformist--consumer-file-transfer">Try It</a>
+        <script src="../../bower_components/jquery/dist/jquery.min.js"></script>
+        <script src="../../js/config.js"></script>
+        <script src="../../js/index.js"></script>
+        <script>
+            function setTryItUrl() {
+                var options = [];
+                var checkedOptionComponents = $('.component-links > div > input:radio:checked');
+                checkedOptionComponents.each(i => {
+                    options.push($(checkedOptionComponents[i]).attr("value"));
+                });
+
+                options.push("mediation-layer");
+                
+                var url = app.getUrlOption(options);
+
+                if(url && ![null, "", "#"].includes(url))
+                {
+                    url = "explore/" + url;
+                }
+
+                $("#try-it-link").attr("href", url)
+            }
+
+            $('.component-links > div > input:radio').change(setTryItUrl);
+
+            setTryItUrl();
+            
+        </script>
     </body>
 </html>

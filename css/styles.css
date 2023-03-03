@@ -20,6 +20,7 @@ body {
   'producer-adapter producer-api mediation-layer consumer-api consumer-adapter'
   'footer footer footer footer footer';
 }
+
 .producer-adapter { grid-area: producer-adapter; }
 .producer-api { grid-area: producer-api; }
 .mediation-layer { grid-area: mediation-layer; }
@@ -71,6 +72,17 @@ body {
   'footer footer footer';
 }
 
+.grid-container-blueprint-short {
+  display: grid;
+  gap: 5px;
+  background-color: #1167b1;
+  padding: 5px;
+  grid-template-areas:
+  'header header header'
+  'producer mediation-layer consumer'
+  'footer footer footer';
+}
+
 .grid-container-component {
   display: grid;
   gap: 5px;
@@ -83,6 +95,14 @@ body {
 }
 
 .grid-container-blueprint > div {
+  background-color: #2a9df4;
+  text-align: center;
+  padding: 5px;
+  font-size: 14px;
+  color: #ffffff;
+}
+
+.grid-container-blueprint-short > div {
   background-color: #2a9df4;
   text-align: center;
   padding: 5px;
@@ -104,6 +124,17 @@ body {
 
 div > img {
   padding: 10px;
+}
+
+label {
+  font-weight: normal;
+}
+
+.centered-content {
+  width: fit-content;
+  text-align: left;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .column {
@@ -137,3 +168,4 @@ code {
   font-weight: normal;
   padding: 0.125rem 0.3125rem 0.0625rem;
 }
+
